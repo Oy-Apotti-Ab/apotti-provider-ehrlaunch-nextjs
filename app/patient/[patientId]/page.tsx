@@ -1,7 +1,9 @@
+// app/patient/[patientId]/page.tsx
+
 'use client';
 
-import { Suspense, useEffect, useState } from 'react';
 import { useParams, useSearchParams } from 'next/navigation';
+import { useEffect, useState, Suspense } from 'react';
 import axios from 'axios';
 import '../../styles/PatientPage.css';
 
@@ -32,7 +34,7 @@ interface ObservationEntry {
   };
 }
 
-export default function PatientPage() {
+function PatientPageContent() {
   const { patientId } = useParams();
   const searchParams = useSearchParams();
   const accessToken = searchParams.get('accessToken');
@@ -83,7 +85,9 @@ export default function PatientPage() {
       const fetchPatientData = async () => {
         try {
           const response = await axios.get(`/api/patient/${patientId}`, {
-            headers: { Authorization: `Bearer ${accessToken}` },
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
           });
           setPatientData(response.data);
         } catch (error) {
@@ -94,7 +98,9 @@ export default function PatientPage() {
       const fetchObservations = async () => {
         try {
           const response = await axios.get(`/api/patient/${patientId}/observations?category=vital-signs`, {
-            headers: { Authorization: `Bearer ${accessToken}` },
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
           });
           setObservations(response.data.entry || []);
         } catch (error) {
@@ -107,75 +113,77 @@ export default function PatientPage() {
     }
   }, [patientId, accessToken]);
 
+  if (!patientData) return <div>Loading...</div>;
+
   return (
-    <Suspense fallback={<div>Loading...</div>}>
-      <div className="container">
-        <div className="header">
-          <h1>Patient Info</h1>
-        </div>
-
-        {patientData && (
-          <div className="patient-info">
-            <table>
-              <tbody>
-                <tr>
-                  <td><strong>Name:</strong></td>
-                  <td>{patientData.name?.[0]?.text || 'N/A'}</td>
-                </tr>
-                <tr>
-                  <td><strong>ID:</strong></td>
-                  <td>{patientData.id}</td>
-                </tr>
-                <tr>
-                  <td><strong>Date of Birth:</strong></td>
-                  <td>{patientData.birthDate || 'N/A'}</td>
-                </tr>
-                <tr>
-                  <td><strong>Address:</strong></td>
-                  <td>{patientData.address?.[0]?.text || 'N/A'}</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        )}
-
-        <div className="header">
-          <h1>Observations</h1>
-        </div>
-
-        {observations.length > 0 ? (
-          <div>
-            <table className="observations-table">
-              <thead>
-                <tr>
-                  <th>Category</th>
-                  <th>Code</th>
-                  <th>Value</th>
-                  <th>Unit</th>
-                  <th>DateTime</th>
-                </tr>
-              </thead>
-              <tbody>
-                {observations.map((entry, index) => (
-                  <tr key={index}>
-                    <td>{entry.resource.category?.[0]?.coding?.[0]?.display || 'vital-signs'}</td>
-                    <td>{entry.resource.code?.text || 'N/A'}</td>
-                    <td>{entry.resource.valueQuantity?.value || 'N/A'}</td>
-                    <td>{entry.resource.valueQuantity?.unit || 'N/A'}</td>
-                    <td>{entry.resource.effectiveDateTime ? new Date(entry.resource.effectiveDateTime).toLocaleString() : 'N/A'}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        ) : (
-          <p>No observations found for this patient.</p>
-        )}
+    <div className="container">
+      <div className="header">
+        <h1>Patient Info</h1>
       </div>
-    </Suspense>
+      {patientData && (
+        <div className="patient-info">
+          <table>
+            <tbody>
+              <tr>
+                <td><strong>Name:</strong></td>
+                <td>{patientData.name?.[0]?.text || 'N/A'}</td>
+              </tr>
+              <tr>
+                <td><strong>ID:</strong></td>
+                <td>{patientData.id}</td>
+              </tr>
+              <tr>
+                <td><strong>Date of Birth:</strong></td>
+                <td>{patientData.birthDate || 'N/A'}</td>
+              </tr>
+              <tr>
+                <td><strong>Address:</strong></td>
+                <td>{patientData.address?.[0]?.text || 'N/A'}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      )}
+      <div className="header">
+        <h1>Observations</h1>
+      </div>
+      {observations.length > 0 ? (
+        <table className="observations-table">
+          <thead>
+            <tr>
+              <th>Category</th>
+              <th>Code</th>
+              <th>Value</th>
+              <th>Unit</th>
+              <th>DateTime</th>
+            </tr>
+          </thead>
+          <tbody>
+            {observations.map((entry, index) => (
+              <tr key={index}>
+                <td>{entry.resource.category?.[0]?.coding?.[0]?.display || 'vital-signs'}</td>
+                <td>{entry.resource.code?.text || 'N/A'}</td>
+                <td>{entry.resource.valueQuantity?.value || 'N/A'}</td>
+                <td>{entry.resource.valueQuantity?.unit || 'N/A'}</td>
+                <td>{entry.resource.effectiveDateTime ? new Date(entry.resource.effectiveDateTime).toLocaleString() : 'N/A'}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      ) : (
+        <p>No observations found for this patient.</p>
+      )}
+    </div>
   );
 }
 
+export default function PatientPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <PatientPageContent />
+    </Suspense>
+  );
+}
 
 
 

@@ -1,9 +1,10 @@
+// app/page.tsx
 'use client';
 
-import { Suspense, useEffect, useState } from 'react';
+import { useEffect, useState, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 
-const Page = () => {
+function AuthorizationRedirect() {
   const [iss, setIss] = useState<string | null>(null);
   const [launch, setLaunch] = useState<string | null>(null);
   const searchParams = useSearchParams();
@@ -28,14 +29,10 @@ const Page = () => {
             if (decodedLaunch && decodedIss) {
               setIss(decodedIss);
               setLaunch(decodedLaunch);
-            } else {
-              console.log('Missing launch or iss in the decoded URL');
             }
           } catch (error) {
             console.error('Error parsing the decoded URL:', error);
           }
-        } else {
-          console.log('Missing iss, launch, and app params in the URL');
         }
       }
     }
@@ -50,28 +47,32 @@ const Page = () => {
       const state = 'random-state';
       const aud = process.env.NEXT_PUBLIC_FHIR_SERVER;
 
-      if (!aud) {
-        throw new Error('NEXT_PUBLIC_FHIR_SERVER is missing or undefined');
-      }
+      if (!aud) throw new Error('NEXT_PUBLIC_FHIR_SERVER is missing or undefined');
 
-      const authUrl = `${authorizeUrl}?response_type=code&client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&launch=${launch}&aud=${encodeURIComponent(aud)}&scope=${encodeURIComponent(scope)}&state=${state}`;
+      const authUrl = `${authorizeUrl}?response_type=code&client_id=${clientId}&redirect_uri=${encodeURIComponent(
+        redirectUri
+      )}&launch=${launch}&aud=${encodeURIComponent(aud)}&scope=${encodeURIComponent(scope)}&state=${state}`;
 
-      console.log('Redirecting to:', authUrl);
       window.location.href = authUrl;
     }
   }, [iss, launch]);
 
   return (
+    <div>
+      <h1>Authorization Redirect Page</h1>
+      <p>Waiting to redirect to authorization server...</p>
+    </div>
+  );
+}
+
+export default function Page() {
+  return (
     <Suspense fallback={<div>Loading...</div>}>
-      <div>
-        <h1>Authorization Redirect Page</h1>
-        <p>Waiting to redirect to authorization server...</p>
-      </div>
+      <AuthorizationRedirect />
     </Suspense>
   );
-};
+}
 
-export default Page;
 
 
 // 'use client';
