@@ -1,26 +1,14 @@
-import { OAuthProvider } from './context/OAuthContext'; // Ensure correct import path
+// //app\layout.tsx
+"use client";
 
-export const metadata = {
-  title: 'Your App Title',
-  description: 'Your app description',
-};
+import { OAuthProvider } from "./context/OAuthContext";
 
-const Layout = ({ children }: { children: React.ReactNode }) => {
-  // Avoid rendering anything that depends on client-specific code
+export default function Layout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <head>
-        <meta charSet="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-      </head>
       <body>
-        <OAuthProvider>
-          {children}
-        </OAuthProvider>
+        <OAuthProvider>{children}</OAuthProvider>
       </body>
     </html>
   );
-};
-
-
-export default Layout;
+}
