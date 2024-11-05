@@ -4,6 +4,7 @@
 import { useEffect, useState, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { useOAuth } from './context/OAuthContext'; // Import the custom hook
+//import LogEnvVariables from './LogEnvVariables'; // Adjust the import path as necessary
 
 function AuthorizationRedirect() {
   const [iss, setIss] = useState<string | null>(null);
@@ -67,8 +68,14 @@ function AuthorizationRedirect() {
 }
 
 export default function Page() {
+
+    // Log environment variables
+    console.log('NEXT_PUBLIC_BASE_URL:', process.env.NEXT_PUBLIC_BASE_URL);
+    console.log('NEXT_PUBLIC_CLIENT_ID:', process.env.NEXT_PUBLIC_CLIENT_ID);
+    console.log('NEXT_PUBLIC_FHIR_SERVER:', process.env.NEXT_PUBLIC_FHIR_SERVER);
   return (
     <Suspense fallback={<div>Loading...</div>}>
+
       <AuthorizationRedirect />
     </Suspense>
   );
