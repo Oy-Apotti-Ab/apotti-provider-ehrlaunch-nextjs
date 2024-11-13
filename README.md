@@ -62,7 +62,7 @@ This application is built to provide healthcare providers with a secure, efficie
 
 2. **Install Dependencies**
 npm install
-# or
+or
 yarn install
 
 ### Environment Variables
@@ -88,6 +88,7 @@ Environment Variables: Set up environment variables under Azure’s Application 
 Redeployment: Ensure redeployment or restart of the Azure service for environment changes to take effect.
 
 ## File Structure
+```plaintext
 apotti-provider-ehrlaunch-nextjs/
 ├── app/
 │   ├── api/
@@ -107,7 +108,7 @@ apotti-provider-ehrlaunch-nextjs/
 ├── next.config.js                    # Next.js configuration
 ├── README.md                         # Project documentation
 └── tsconfig.json                     # TypeScript configuration
-
+```
 
 ## Contributing
 Contributions are welcome! Please fork the repository, create a feature branch, and submit a pull request.
