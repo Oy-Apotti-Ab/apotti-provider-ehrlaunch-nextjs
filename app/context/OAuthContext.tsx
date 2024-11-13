@@ -1,6 +1,7 @@
 "use client";
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from "react";
+import axios from "axios";
 
 // Define the shape of the context value
 interface OAuthContextType {
@@ -22,7 +23,7 @@ export const useOAuth = () => {
   return context;
 };
 
-// Adjust OAuthProvider to include fetching functionality
+// OAuthProvider component
 export const OAuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [authorizeUrl, setAuthorizeUrl] = useState<string | null>(null);
   const [tokenUrl, setTokenUrl] = useState<string | null>(null);
@@ -31,16 +32,14 @@ export const OAuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =
   useEffect(() => {
     const fetchMetadata = async () => {
       try {
-        const response = await fetch("/api/oauth-endpoints");
-        const data = await response.json();
-        const extensions = data?.rest?.[0]?.security?.extension?.[0]?.extension;
-
-        if (extensions) {
-          const authorize = extensions.find((ext: { url: string }) => ext.url === "authorize")?.valueUri;
-          const token = extensions.find((ext: { url: string }) => ext.url === "token")?.valueUri;
-          setAuthorizeUrl(authorize);
-          setTokenUrl(token);
-        }
+        console.log("Fetching OAuth metadata via proxy API route...");
+        const response = await axios.get("/api/oauth-endpoints");
+        
+        const { authorization_endpoint, token_endpoint } = response.data;
+        setAuthorizeUrl(authorization_endpoint);
+        //console.log("Authorization URL:", authorization_endpoint);
+        setTokenUrl(token_endpoint);
+        //console.log("Token URL:", token_endpoint);  
       } catch (error) {
         console.error("Error fetching OAuth metadata:", error);
       }
