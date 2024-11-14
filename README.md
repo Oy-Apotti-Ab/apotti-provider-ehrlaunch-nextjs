@@ -1,98 +1,117 @@
-# Apotti Patient Standalone App (Next.js)
+# Apotti Provider EHR Launch (Next.js Project)
 
-This project is a standalone patient-facing application that allows patients to enter and view their observations. It interacts with a FHIR server to retrieve and create patient observations using the SMART on FHIR protocol. This application is built using Next.js with TypeScript.
+This project is a provider-facing application using Next.js, integrated with SMART on FHIR to allow users to authenticate and manage healthcare-related data, including observations and patient information. The app supports OAuth2 authentication, connects to FHIR servers, and enables providers to interact with Electronic Health Records (EHRs).
 
 ## Table of Contents
-- [Features](#features)
+
+- [About the Project](#about-the-project)
 - [Technologies](#technologies)
-- [Setup](#setup)
-- [Environment Variables](#environment-variables)
-- [Running the Application](#running-the-application)
+- [Features](#features)
+- [Getting Started](#getting-started)
+  - [Prerequisites](#prerequisites)
+  - [Installation](#installation)
+  - [Environment Variables](#environment-variables)
+- [Usage](#usage)
+- [Deployment](#deployment)
+  - [Vercel](#vercel)
+  - [Azure](#azure)
 - [File Structure](#file-structure)
-- [Patient Data Handling](#patient-data-handling)
+- [Contributing](#contributing)
 - [License](#license)
 
-## Features
-- **Patient Data Display**: Displays patient information (Name, ID, Date of Birth, Address) retrieved from the FHIR server.
-- **Observations Display**: Shows the patient's observations in a table, sorted by the `effectiveDateTime` in descending order.
-- **Observation Creation**: Allows patients to create new observations by filling out a form.
-- **SMART on FHIR Authentication**: Utilizes the SMART on FHIR protocol for OAuth2 authentication.
+---
+
+## About the Project
+
+This application is built to provide healthcare providers with a secure, efficient way to interact with patient data via the FHIR (Fast Healthcare Interoperability Resources) standard. It uses OAuth2 for secure authentication and authorization, integrated with SMART on FHIR. The application enables users to view and create patient observations, access patient records, and securely manage data in compliance with healthcare regulations.
 
 ## Technologies
-- **Next.js** (v13+)
-- **React** (v18+)
-- **TypeScript** (for type safety)
-- **CSS Modules** (for styling)
-- **Axios** (for data fetching)
-- **FHIR** (Fast Healthcare Interoperability Resources)
 
-## Setup
+- **Next.js** 13 (using the App Router)
+- **TypeScript**
+- **OAuth2** for authentication
+- **SMART on FHIR** integration
+- **React** for client-side rendering
+- **CSS Modules** for styling
+- **FHIR Server** for healthcare data interaction
 
-1. Clone this repository:
+## Features
+
+- Secure OAuth2-based authentication
+- Integration with FHIR server for retrieving and posting healthcare data
+- Patient information and observation management
+- Server-side and client-side rendering (SSR/CSR)
+- Environment variable management for secure deployment
+
+## Getting Started
+
+### Prerequisites
+
+- **Node.js** (v16.x or later recommended)
+- **npm** or **yarn**
+- **FHIR server** for healthcare data access (e.g., SMART Health IT Sandbox, Epic FHIR API)
+- **OAuth2 credentials** for FHIR server authentication
+
+### Installation
+
+1. **Clone the Repository**
+
    ```bash
-   git clone https://github.com/yourusername/apotti-patient-standalone.git
+   git clone https://github.com/your-username/apotti-provider-ehrlaunch-nextjs.git
+   cd apotti-provider-ehrlaunch-nextjs
 
-2.  Navigate to the project directory:
-cd apotti-patient-standalone
-
-3. Install the dependencies:
+2. **Install Dependencies**
 npm install
+or
+yarn install
 
-## Environment Variables
-Before running the application, ensure you have the following environment variables set in the .env.local file:
-NEXT_PUBLIC_FHIR_SERVER: FHIR server base URL
-NEXT_PUBLIC_FHIR_SERVER_A: FHIR server authorization endpoint
-NEXT_PUBLIC_CLIENT_ID: Your client ID for OAuth2 authentication
+### Environment Variables
+Configure the following environment variables in a .env.local file at the project root:
+NEXT_PUBLIC_FHIR_SERVER=https://your-fhir-server-url/api/FHIR/R4
+NEXT_PUBLIC_CLIENT_ID=your-client-id
+NEXT_PUBLIC_BASE_URL=https://your-deployed-url.com
 
-## Running the Application
-To start the development server, run:
-```bash
+## Usage
+1. Run the Development Server
 npm run dev
-```
+2. Access the Application
+pen http://localhost:3000 in your browser to view the app.
+3. Logging and Debugging
+Console logs will display environment variables in development. Ensure these values are available and correctly set.
 
-This will start the application on http://localhost:3000.
+## Deployment
+### Vercel
+Environment Variables: Add environment variables directly to Vercel under the project’s settings.
+Deploy: Connect your repository to Vercel and deploy. Vercel will automatically redeploy upon environment variable changes.
+### Azure
+Environment Variables: Set up environment variables under Azure’s Application Settings.
+Redeployment: Ensure redeployment or restart of the Azure service for environment changes to take effect.
 
 ## File Structure
-
 ```plaintext
-├── app
-│   ├── api
-│   │   ├── auth
-│   │   │   └── callback
-│   │   │       └── route.ts       # Callback route for OAuth2
-│   │   └── observation
-│   │       └── [patientId]
-│   │           └── route.ts       # API route to fetch patient observations
-│   ├── components
-│   │   └── PatientObservationForm.tsx  # Observation form component
-│   ├── patient
-│   │   └── [patientId]
-│   │       └── page.tsx           # Patient details and observation listing
-│   ├── page.tsx                   # Homepage of the application
-│   └── styles
-│       ├── HomePage.css           # CSS for the homepage
-│       └── PatientPage.css        # CSS for the patient info and observations page
-├── public
-│   └── apottilabs.png             # Logo used in the app
-├── .env.local                     # Environment variables
-├── package.json                   # Dependencies and scripts
-└── README.md                      # Project information
+apotti-provider-ehrlaunch-nextjs/
+├── app/
+│   ├── api/
+│   │   ├── auth/
+│   │   │   └── callback/route.ts    # OAuth callback handler
+│   │   └── patient/[patientId]/route.ts   # Fetch patient data
+│   ├── components/
+│   │   └── PatientObservationForm.tsx     # Patient observation form
+│   ├── patient/[patientId]/
+│   │   └── page.tsx                  # Patient detail page
+│   ├── styles/
+│   │   ├── HomePage.css
+│   │   └── PatientPage.css
+│   └── page.tsx                      # Entry point for app
+├── public/                           # Public assets
+├── .env.local                        # Local environment variables
+├── next.config.js                    # Next.js configuration
+├── README.md                         # Project documentation
+└── tsconfig.json                     # TypeScript configuration
 ```
 
-## Patient Data Handling
-Patient Info
-The patient’s information is displayed after successful authentication and fetching of patient data from the FHIR server. It includes:
+## Contributing
+Contributions are welcome! Please fork the repository, create a feature branch, and submit a pull request.
 
-- Name
-- ID
-- Date of Birth
-- Address
-- 
-Observations:. The patient’s observations are fetched from the FHIR server and displayed in a table. Observations are sorted by effectiveDateTime in descending order. Each observation includes:
-
-    - Observation Code
-    - Value
-    - Unit
-    - DateTime
 ## License
 This project is licensed under the MIT License.
